@@ -4,10 +4,10 @@ isometric = {
         height = 100
     },
     camera = {
-        x = 0,
-        y = 0,
+        x = 4,
+        y = 4,
         z = 2,
-        rotationZ = math.pi/4,---math.pi/4,
+        rotationZ = -math.pi/4,---math.pi/4,
         rotationX = -math.atan(1/math.sqrt(2)),
     },
     draw = {
@@ -57,7 +57,6 @@ function isometric.translatePoint.dynamicRotation( x , y , z )
 
     to solve the equation, Cramer's rule will be used.
     (https://en.wikipedia.org/wiki/Cramer%27s_rule)
-    --].]
     ]]--
     local cosA = math.cos( isometric.camera.rotationZ );
     local sinA = math.sin( isometric.camera.rotationZ );
@@ -78,7 +77,7 @@ function isometric.translatePoint.dynamicRotation( x , y , z )
     local w = detC / det;
 
     -- 'w' has to be negative since y-axis is mirrored from the cartesian coordinat system
-    return u , -w, v,v > 0;
+    return u * isometric.scale.width, - w * isometric.scale.height, v,v > 0;
 end
 
 -- assumes the rotation is math.pi/4 and math.pi/4,-math.atan(1/math.sqrt(2))
@@ -89,7 +88,7 @@ function isometric.translatePoint.staticRotation( x , y , z )
     local detA = isometric.constants.invsqrt2*(  dx+dy     );
     local detB = isometric.constants.invsqrt3*(  dy-dx-dz  );
     local detC = isometric.constants.invsqrt6*( 2*dz+dy-dx );
-    return detA, -detC, detB,detB > 0;
+    return detA*isometric.scale.width, -detC*isometric.scale.height, detB,detB > 0;
 end
 
 function isometric.camera.setPosition( x, y, z )
@@ -123,13 +122,3 @@ function isometric.camera.getRotation( )
 end
 
 return isometric;
-
---[[
-local cosA = math.sqrt(2)/2;
-local sinA = math.sqrt(2)/2;
-local cosB = math.sqrt(6)/3;
-local sinB = -math.sqrt(3)/3;
-local ux, uy, uz =  math.sqrt(2)/2, math.sqrt(2)/2,               0;
-local vx, vy, vz = -math.sqrt(3)/3, math.sqrt(3)/3, -math.sqrt(3)/3;
-local wx, wy, wz = -math.sqrt(6)/6, math.sqrt(6)/6,  math.sqrt(6)/3;
---]]
