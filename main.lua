@@ -2,10 +2,18 @@ function love.load()
 	engine = require("engine.engine");
 	love.graphics.setBackgroundColor(135*0.2,206*0.2,250*0.2);
 
-	for x = 1, 8 do
-		for y = 1, 8 do
-			engine.world.newObject.planeX( "fill", x, y, 0, 1, 1, {math.random()*25,230 + 25*math.random(),math.random()*25}, 1 );
-			engine.world.newObject.planeX( "line", x, y, 0, 1, 1, {0,0,0}, 1 );
+	engine.world.newObject.planeX( "fill", 0, 0, 0, 1, 1, {45,12,220}, 1 );
+	engine.world.newObject.planeX( "line", 0, 0, 0, 1, 1, {0,0,0}, 1 );
+	engine.world.newObject.planeX( "fill", 1, 0, 0, 1, 1, {45,240,40}, 1 );
+	engine.world.newObject.planeX( "line", 1, 0, 0, 1, 1, {0,0,0}, 1 );
+	engine.world.newObject.planeZ( "fill", 0, 0, 0, 1, 1, {230,12,45},1 );
+	engine.world.newObject.planeZ( "line", 0, 0, 0, 1, 1, {0,0,0}, 2 );
+	engine.world.newObject.planeZ( "fill", 0, 0, 1, 1, 1, {12,233,244}, 2 );
+	engine.world.newObject.planeZ( "line", 0, 0, 1, 1, 1, {0,0,0}, 2 );
+	for x = 0, 10 do
+		for y = 0, 10 do
+			--engine.world.newObject.planeZ( "fill", x, y, 0, 1, 1, {math.random()*25,230 + 25*math.random(),math.random()*25}, 1 );
+			--engine.world.newObject.planeZ( "line", x, y, 0, 1, 1, {0,0,0}, 1 );
 		end
 	end
 end

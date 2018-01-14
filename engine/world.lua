@@ -1,5 +1,5 @@
 world = {
-    drawMode = "staticRotation";
+    drawMode = "dynamicRotation";
     objects = {},
     newObject = {}
 };
@@ -12,7 +12,7 @@ local function getAverageTable( vertices )
     for index = 1, tableLength do
         sumX = sumX + vertices[index][1];
         sumY = sumY + vertices[index][2];
-        sumY = sumY + vertices[index][3];
+        sumZ = sumZ + vertices[index][3];
     end
     return {
         x = sumX / tableLength,
@@ -21,7 +21,7 @@ local function getAverageTable( vertices )
     };
 end
 
-function world.newObject.planeX( mode, x, y, z, w, l, color, id )
+function world.newObject.planeZ( mode, x, y, z, w, l, color, id )
     local object = {
         color = { r = color[1], g = color[2], b = color[3] },
         type = "plane",
@@ -35,17 +35,29 @@ function world.newObject.planeX( mode, x, y, z, w, l, color, id )
     table.insert( world.objects, object );
 end
 
+function world.newObject.planeX( mode, x, y, z, h, l, color, id )
+    local object = {
+        color = { r = color[1], g = color[2], b = color[3] },
+        type = "plane",
+        subType = mode,
+        distance = 10, -- It might be wise to set this to math.huge.
+        id = id or 0
+    };
+    local vertices = {{x,y,z},{x,y,z+h},{x,y+l,z+h},{x,y+l,z}};
+    object["vertices"] = vertices;
+    object["average"] = getAverageTable( vertices );
+    print( tableToString(vertices) , tableToString(getAverageTable( vertices )));
+    table.insert( world.objects, object );
+end
+
 function world.update( dt )
     for index = 1, #world.objects do
         local object = world.objects[index];
-        object.distance =
-            ( camera.camera.x - object.average.x )^2 +
-            ( camera.camera.y - object.average.y )^2 +
-            ( camera.camera.z - object.average.z )^2;
-
+        local a,b,c = camera.translatePoint[ world.drawMode ]( object.average.x, object.average.y, object.average.z );
+        object.distance = c;
         -- temporary solution to draw lines with higher priority
         if world.objects[index].subType == "line" then
-            object.distance = object.distance - 0.1;
+            object.distance = object.distance - 0.01;
         end
     end
 
@@ -97,6 +109,11 @@ function tableToString( table )
 end
 
 return world;
+
+--object.distance =
+--    ( camera.camera.x - object.average.x )^2 +
+--    ( camera.camera.y - object.average.y )^2 +
+--    ( camera.camera.z - object.average.z )^2;
 
 --[[
 Objects are just several planes or other 3d-shapes

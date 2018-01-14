@@ -1,12 +1,12 @@
 isometric = {
     scale = {
-        width = 100,
-        height = 100
+        width = 200,
+        height = 200
     },
     camera = {
-        x = 4,
-        y = 4,
-        z = 2,
+        x = 0.5,
+        y = 0.5,
+        z = 0.5,
         rotationZ = -math.pi/4,---math.pi/4,
         rotationX = -math.atan(1/math.sqrt(2)),
     },
