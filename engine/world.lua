@@ -22,31 +22,46 @@ local function getAverageTable( vertices )
 end
 
 function world.newObject.planeZ( mode, x, y, z, w, l, color, id )
-    local object = {
-        color = { r = color[1], g = color[2], b = color[3] },
-        type = "plane",
-        subType = mode,
-        distance = math.huge,
-        id = id or 0
-    };
-    local vertices = {{x,y,z},{x+w,y,z},{x+w,y+l,z},{x,y+l,z}};
-    object["vertices"] = vertices;
-    object["average"] = getAverageTable( vertices );
-    table.insert( world.objects, object );
+    world.newObject.basicObject( {{x,y,z},{x+w,y,z},{x+w,y+l,z},{x,y+l,z}}, color, id, "plane", mode);
 end
 
 function world.newObject.planeX( mode, x, y, z, h, l, color, id )
+    world.newObject.basicObject( {{x,y,z},{x,y,z+h},{x,y+l,z+h},{x,y+l,z}}, color, id, "plane", mode);
+end
+
+function world.newObject.planeY( mode, x, y, z, w, h, color, id )
+    world.newObject.basicObject( {{x,y,z},{x+w,y,z},{x+w,y,z+h},{x,y,z+h}}, color, id, "plane", mode)
+end
+
+function world.newObject.line( x1, y1, z1, x2, y2, z2, color, id )
+    world.newObject.basicObject( {{x1,y1,z1},{x2,y2,z2}}, color, id, "line", nil)
+end
+
+function world.newObject.box( mode, x, y, z, w, l, h, color, id )
+    local vertices1 = {{x  ,y  ,z  },{x+w,y  ,z  },{x+w,y+l,z  },{x  ,y+l,z  }};
+    local vertices2 = {{x  ,y  ,z+h},{x+w,y  ,z+h},{x+w,y+l,z+h},{x  ,y+l,z+h}};
+    local vertices3 = {{x  ,y  ,z  },{x+w,y  ,z  },{x+w,y  ,z+h},{x  ,y  ,z+h}};
+    local vertices4 = {{x  ,y+l,z  },{x+w,y+l,z  },{x+w,y+l,z+h},{x  ,y+l,z+h}};
+    local vertices5 = {{x  ,y  ,z  },{x  ,y+l,z  },{x  ,y+l,z+h},{x  ,y  ,z+h}};
+    local vertices6 = {{x+w,y  ,z  },{x+w,y+l,z  },{x+w,y+l,z+h},{x+w,y  ,z+h}};
+    world.newObject.basicObject( vertices1, color, id, "plane", mode);
+    world.newObject.basicObject( vertices2, color, id, "plane", mode);
+    world.newObject.basicObject( vertices3, color, id, "plane", mode);
+    world.newObject.basicObject( vertices4, color, id, "plane", mode);
+    world.newObject.basicObject( vertices5, color, id, "plane", mode);
+    world.newObject.basicObject( vertices6, color, id, "plane", mode);
+end
+
+function world.newObject.basicObject( vertices, color, id, type, subType)
     local object = {
         color = { r = color[1], g = color[2], b = color[3] },
-        type = "plane",
-        subType = mode,
-        distance = 10, -- It might be wise to set this to math.huge.
+        type = type,
+        subType = subType,
+        distance = 10,
         id = id or 0
     };
-    local vertices = {{x,y,z},{x,y,z+h},{x,y+l,z+h},{x,y+l,z}};
     object["vertices"] = vertices;
     object["average"] = getAverageTable( vertices );
-    print( tableToString(vertices) , tableToString(getAverageTable( vertices )));
     table.insert( world.objects, object );
 end
 
@@ -83,6 +98,8 @@ function world.drawObject( object )
     love.graphics.setColor( object.color.r, object.color.g, object.color.b);
     if object.type == "plane" then
         love.graphics.polygon( object.subType, vertices );
+    elseif object.type == "line" then
+        love.graphics.line( vertices );
     end
 end
 
@@ -109,11 +126,6 @@ function tableToString( table )
 end
 
 return world;
-
---object.distance =
---    ( camera.camera.x - object.average.x )^2 +
---    ( camera.camera.y - object.average.y )^2 +
---    ( camera.camera.z - object.average.z )^2;
 
 --[[
 Objects are just several planes or other 3d-shapes
